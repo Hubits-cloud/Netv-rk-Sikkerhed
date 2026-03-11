@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Security 1.0 — Exam Cheatsheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --surface: #0f1520;
+    --card: #131c2b;
+    --border: #1e2d42;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39ff14;
+    --warn: #ffd700;
+    --danger: #ff3b3b;
+    --text: #c8d8e8;
+    --muted: #5a7a9a;
+    --mono: 'Share Tech Mono', monospace;
+    --head: 'Barlow Condensed', sans-serif;
+    --body: 'Barlow', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 20px;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f1520 0%, #091826 100%);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.06), transparent);
+    animation: sweep 4s infinite;
+  }
+  @keyframes sweep { to { left: 140%; } }
+
+  header .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  header h1 {
+    font-family: var(--head);
+    font-size: 38px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  header h1 span { color: var(--accent); }
+  header .sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 2px;
+  }
+
+  /* ── Grid layout ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .card-head {
+    font-family: var(--head);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-head .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card-body { padding: 10px 12px; }
+
+  /* accent colors per section */
+  .c-blue  .card-head { background: rgba(0,212,255,0.1); color: var(--accent); border-bottom: 1px solid rgba(0,212,255,0.2); }
+  .c-blue  .card-head .dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  .c-orange .card-head { background: rgba(255,107,53,0.1); color: var(--accent2); border-bottom: 1px solid rgba(255,107,53,0.2); }
+  .c-orange .card-head .dot { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+  .c-green .card-head { background: rgba(57,255,20,0.08); color: var(--accent3); border-bottom: 1px solid rgba(57,255,20,0.2); }
+  .c-green .card-head .dot { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); }
+  .c-gold  .card-head { background: rgba(255,215,0,0.08); color: var(--warn); border-bottom: 1px solid rgba(255,215,0,0.2); }
+  .c-gold  .card-head .dot { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+  .c-red   .card-head { background: rgba(255,59,59,0.1); color: var(--danger); border-bottom: 1px solid rgba(255,59,59,0.2); }
+  .c-red   .card-head .dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(30,45,66,0.5);
+    vertical-align: top;
+    font-size: 12px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,212,255,0.03); }
+
+  .hi { color: var(--accent); font-family: var(--mono); font-size: 11px; }
+  .hi2 { color: var(--accent2); font-family: var(--mono); font-size: 11px; }
+  .hi3 { color: var(--accent3); font-family: var(--mono); font-size: 11px; }
+  .hiw { color: var(--warn); font-family: var(--mono); font-size: 11px; }
+  .hir { color: var(--danger); font-family: var(--mono); font-size: 11px; }
+  .dim { color: var(--muted); font-size: 11px; }
+
+  /* ── Code blocks ── */
+  code, .mono {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent3);
+    background: rgba(57,255,20,0.05);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .b-blue  { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+  .b-orange{ background: rgba(255,107,53,0.15); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
+  .b-green { background: rgba(57,255,20,0.12); color: var(--accent3); border: 1px solid rgba(57,255,20,0.3); }
+  .b-gold  { background: rgba(255,215,0,0.12); color: var(--warn); border: 1px solid rgba(255,215,0,0.3); }
+  .b-red   { background: rgba(255,59,59,0.12); color: var(--danger); border: 1px solid rgba(255,59,59,0.3); }
+
+  /* ── Lists ── */
+  ul.clean { list-style: none; padding: 0; }
+  ul.clean li {
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(30,45,66,0.4);
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    font-size: 12px;
+  }
+  ul.clean li:last-child { border-bottom: none; }
+  ul.clean li::before { content: '›'; color: var(--accent); font-size: 14px; flex-shrink: 0; }
+
+  /* ── Exam tip boxes ── */
+  .tip {
+    background: rgba(255,215,0,0.07);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-left: 3px solid var(--warn);
+    padding: 7px 10px;
+    border-radius: 2px;
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: #d4bc60;
+  }
+  .tip strong { color: var(--warn); }
+
+  .warn-box {
+    background: rgba(255,59,59,0.07);
+    border: 1px solid rgba(255,59,59,0.25);
+    border-left: 3px solid var(--danger);
+    padding: 7px 10px;
+    border-radius: 2px;
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: #d47070;
+  }
+  .warn-box strong { color: var(--danger); }
+
+  /* ── Section labels ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 18px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── Compare table ── */
+  .vs-row td:first-child { color: var(--text); font-weight: 500; min-width: 90px; }
+  .vs-row td:nth-child(2) { color: var(--accent); }
+  .vs-row td:nth-child(3) { color: var(--accent2); }
+
+  .col-head {
+    font-family: var(--head);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 8px;
+    text-align: center;
+  }
+
+  /* ── Attack/defense mini table ── */
+  .atk td:first-child { color: var(--danger); font-size: 11px; }
+  .atk td:last-child { color: var(--accent3); font-size: 11px; }
+
+  /* ── Syslog severity ── */
+  .sev-0 { color: #ff3b3b; }
+  .sev-1 { color: #ff6b35; }
+  .sev-2 { color: #ff8c00; }
+  .sev-3 { color: #ffc107; }
+  .sev-4 { color: #ffd700; }
+  .sev-5 { color: #90ee90; }
+  .sev-6 { color: #00d4ff; }
+  .sev-7 { color: var(--muted); }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 20px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  @media print {
+    body { background: #fff; color: #000; padding: 10px; }
+    body::before { display: none; }
+    header::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ HEADER -->
+<header>
+  <div class="label">// cisco netacad //</div>
+  <h1>Network Security <span>1.0</span></h1>
+  <div class="sub">FINAL EXAM CHEATSHEET &nbsp;·&nbsp; ALL MODULES &nbsp;·&nbsp; KEY FACTS &amp; TRAPS</div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════ ROW 1 -->
+<div class="section-label">threats &amp; malware</div>
+<div class="grid">
+
+  <!-- Malware types -->
+  <div class="card c-red">
+    <div class="card-head"><div class="dot"></div>Malware Quick-Reference</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Type</th><th>Key Trait</th></tr>
+        <tr><td><span class="hir">Virus</span></td><td>Attaches to file; needs <em>user action</em> to spread</td></tr>
+        <tr><td><span class="hir">Worm</span></td><td>Self-replicates <em>without user action</em>; exploits network vulnerabilities</td></tr>
+        <tr><td><span class="hir">Trojan</span></td><td>Disguised as legit software; does NOT self-replicate</td></tr>
+        <tr><td><span class="hir">Rootkit</span></td><td>Hides at kernel level; conceals other malware</td></tr>
+        <tr><td><span class="hir">Ransomware</span></td><td>Encrypts files; demands payment</td></tr>
+        <tr><td><span class="hir">Botnet/Bot</span></td><td>Compromised host controlled via C2 server</td></tr>
+        <tr><td><span class="hir">Spyware</span></td><td>Captures keystrokes/data; sends to attacker</td></tr>
+      </table>
+      <div class="tip"><strong>Exam trap:</strong> Virus = needs user activation. Worm = no user action needed. Worm can launch DDoS; virus only DoS.</div>
+    </div>
+  </div>
+
+  <!-- Attacks -->
+  <div class="card c-orange">
+    <div class="card-head"><div class="dot"></div>Attack Types</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Attack</th><th>Description</th></tr>
+        <tr><td><span class="hi2">Recon (passive)</span></td><td>Sniffing, OSINT — no packets to target</td></tr>
+        <tr><td><span class="hi2">Recon (active)</span></td><td>Ping sweep, port scan — packets sent</td></tr>
+        <tr><td><span class="hi2">Brute force</span></td><td>Try every key/password combination</td></tr>
+        <tr><td><span class="hi2">Dictionary</span></td><td>Try words from a wordlist</td></tr>
+        <tr><td><span class="hi2">SYN flood</span></td><td>Half-open TCP; exhaust connection table</td></tr>
+        <tr><td><span class="hi2">Smurf</span></td><td>ICMP to broadcast; spoofed source = victim</td></tr>
+        <tr><td><span class="hi2">Buffer overflow</span></td><td>Overwrite memory to execute arbitrary code</td></tr>
+        <tr><td><span class="hi2">Zero-day</span></td><td>Unknown/undisclosed vulnerability exploit</td></tr>
+      </table>
+      <div class="tip"><strong>Port scan limit:</strong> Only <strong>IPS</strong> and <strong>firewall</strong> limit port scanning. Passwords/encryption do NOT.</div>
+    </div>
+  </div>
+
+  <!-- Social Engineering -->
+  <div class="card c-orange">
+    <div class="card-head"><div class="dot"></div>Social Engineering</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Technique</th><th>Method</th></tr>
+        <tr><td><span class="hi2">Phishing</span></td><td>Fake email from trusted entity</td></tr>
+        <tr><td><span class="hi2">Spear phishing</span></td><td>Personalised phishing using researched details</td></tr>
+        <tr><td><span class="hi2">Whaling</span></td><td>Spear phishing → senior executives (CEO/CFO)</td></tr>
+        <tr><td><span class="hi2">Vishing</span></td><td>Voice phishing (phone)</td></tr>
+        <tr><td><span class="hi2">Pretexting</span></td><td>Fabricated scenario ("I'm from IT…")</td></tr>
+        <tr><td><span class="hi2">Baiting</span></td><td>Infected USB left in parking lot</td></tr>
+        <tr><td><span class="hi2">Tailgating</span></td><td>Follow authorised person through door</td></tr>
+        <tr><td><span class="hi2">Watering hole</span></td><td>Infect site known to be visited by target</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 2: AAA -->
+<div class="section-label">AAA &amp; device access</div>
+<div class="grid">
+
+  <!-- TACACS vs RADIUS — most tested comparison -->
+  <div class="card c-blue span-2">
+    <div class="card-head"><div class="dot"></div>TACACS+ vs RADIUS — Most-Tested Comparison</div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:22%">Feature</th>
+            <th class="col-head" style="color:var(--accent)">TACACS+</th>
+            <th class="col-head" style="color:var(--accent2)">RADIUS</th>
+          </tr>
+        </thead>
+        <tbody class="vs-row">
+          <tr class="vs-row"><td>Protocol</td><td>TCP</td><td>UDP</td></tr>
+          <tr class="vs-row"><td>Port</td><td>49</td><td>1812 (auth) / 1813 (acct)</td></tr>
+          <tr class="vs-row"><td>Encryption</td><td><strong>Entire packet</strong></td><td>Password only</td></tr>
+          <tr class="vs-row"><td>AAA separation</td><td><strong>Fully separated</strong></td><td>Auth + authz combined</td></tr>
+          <tr class="vs-row"><td>Command authz</td><td><strong>Granular per-command</strong></td><td>Limited</td></tr>
+          <tr class="vs-row"><td>Standard</td><td>Cisco proprietary</td><td>Open RFC standard</td></tr>
+          <tr class="vs-row"><td>Best for</td><td><strong>Device administration</strong></td><td>Network access (VPN, 802.1X, Wi-Fi)</td></tr>
+          <tr class="vs-row"><td>802.1X / SIP support</td><td>No</td><td><strong>Yes</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="tip"><strong>Both share:</strong> password encryption + use of transport layer protocols (Layer 4). <strong>Only TACACS+</strong> separates auth/authz. <strong>Only RADIUS</strong> supports 802.1X and SIP. RADIUS provides <em>separate ports for authorization and accounting</em> — that's the trick answer.</div>
+    </div>
+  </div>
+
+  <!-- Privilege Levels + CLI Views -->
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>Privilege Levels &amp; CLI Views</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Level</th><th>Access</th></tr>
+        <tr><td><span class="hi">0</span></td><td>Minimal: help, exit, logout only</td></tr>
+        <tr><td><span class="hi">1</span></td><td>User EXEC <code>&gt;</code> — default, read-only</td></tr>
+        <tr><td><span class="hi">2–14</span></td><td>Custom admin-defined levels</td></tr>
+        <tr><td><span class="hi">15</span></td><td>Privileged EXEC <code>#</code> — full access</td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <table>
+          <tr><th>CLI View Concept</th><th>Description</th></tr>
+          <tr><td><span class="hi">Root view</span></td><td>Full access; needed to create views</td></tr>
+          <tr><td><span class="hi">CLI view</span></td><td>Named set of permitted commands</td></tr>
+          <tr><td><span class="hi">Superview</span></td><td>Collection of views; inherits all</td></tr>
+        </table>
+      </div>
+      <div class="tip"><strong>Key:</strong> AAA must be enabled (<code>aaa new-model</code>) to use CLI views. Command: <code>enable view</code> to enter root view. A CLI view <em>can be shared</em> within multiple superviews.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SSH + Login -->
+<div class="grid grid-2" style="margin-top:12px">
+  <div class="card c-green">
+    <div class="card-head"><div class="dot"></div>SSH Setup — Required Steps for Exam</div>
+    <div class="card-body">
+      <ul class="clean">
+        <li>Set <strong>hostname</strong> (not "Router")</li>
+        <li>Set <strong>ip domain-name</strong></li>
+        <li><strong>crypto key generate rsa modulus 2048</strong></li>
+        <li>Set <strong>ip ssh version 2</strong></li>
+        <li>Configure <code>login local</code> + <code>transport input ssh</code> on VTY</li>
+      </ul>
+      <div class="tip"><strong>Exam question:</strong> "Which three additional steps are required?" → hostname, domain-name, crypto key generate (NOT DNS, NOT pre-shared keys)</div>
+    </div>
+  </div>
+
+  <div class="card c-gold">
+    <div class="card-head"><div class="dot"></div>login block-for — Read This Carefully</div>
+    <div class="card-body">
+      <div style="font-family:var(--mono); font-size:12px; color:var(--accent3); background:rgba(57,255,20,0.05); padding:8px; border-radius:3px; margin-bottom:8px">
+        login block-for <span style="color:var(--warn)">150</span> attempts <span style="color:var(--accent2)">4</span> within <span style="color:var(--accent)">90</span>
+      </div>
+      <ul class="clean">
+        <li>Block for <span class="hiw">150 seconds</span> (first number)</li>
+        <li>If <span class="hi2">4 attempts</span> fail (middle number)</li>
+        <li>Within <span class="hi">90 seconds</span> (last number)</li>
+      </ul>
+      <div class="warn-box"><strong>Exam trap:</strong> People confuse the numbers. Remember: block-for = duration, within = window. The block-for value ALWAYS wins.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 3: ACLs -->
+<div class="section-label">access control lists</div>
+<div class="grid">
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>Standard vs Extended ACLs</div>
+    <div class="card-body">
+      <table>
+        <tr><th></th><th>Standard</th><th>Extended</th></tr>
+        <tr><td class="dim">Numbers</td><td>1–99, 1300–1999</td><td>100–199, 2000–2699</td></tr>
+        <tr><td class="dim">Matches</td><td>Source IP <em>only</em></td><td>Src + Dst + Protocol + Port</td></tr>
+        <tr><td class="dim">Place near</td><td><strong>Destination</strong></td><td><strong>Source</strong></td></tr>
+        <tr><td class="dim">IOS masks</td><td colspan="2">Wildcard masks (0=match, 1=ignore)</td></tr>
+        <tr><td class="dim">ASA masks</td><td colspan="2"><strong>Subnet masks</strong> (NOT wildcard!)</td></tr>
+      </table>
+      <div class="tip"><strong>Implicit deny:</strong> Every ACL ends with invisible <code>deny any any</code>. Unmatched traffic is dropped.</div>
+      <div class="warn-box"><strong>Router-generated packets</strong> cannot be filtered by an outbound ACL — they bypass it.</div>
+    </div>
+  </div>
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>ACL Wildcard Masks</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Wildcard</th><th>Meaning</th><th>Shortcut</th></tr>
+        <tr><td><code>0.0.0.0</code></td><td>Match exact host (/32)</td><td><code>host x.x.x.x</code></td></tr>
+        <tr><td><code>0.0.0.255</code></td><td>Match /24 network</td><td>—</td></tr>
+        <tr><td><code>0.0.255.255</code></td><td>Match /16 network</td><td>—</td></tr>
+        <tr><td><code>255.255.255.255</code></td><td>Match anything</td><td><code>any</code></td></tr>
+      </table>
+      <div style="margin-top:8px; font-size:12px">
+        Wildcard = <strong>255.255.255.255 − subnet mask</strong><br>
+        e.g. /24 mask = 255.255.255.0 → wildcard = <span class="hi">0.0.0.255</span>
+      </div>
+      <div class="tip"><strong>IPv6 ACLs:</strong> Named only. Must explicitly <code>permit icmp any any nd-na</code> and <code>nd-ns</code> or IPv6 breaks. Applied with <code>ipv6 traffic-filter</code> (not <code>access-group</code>).</div>
+    </div>
+  </div>
+
+  <div class="card c-gold">
+    <div class="card-head"><div class="dot"></div>ACL — Exam Traps</div>
+    <div class="card-body">
+      <ul class="clean">
+        <li><strong>To change ACL direction:</strong> Remove inbound association, reapply outbound — do NOT delete and recreate</li>
+        <li><strong>established keyword:</strong> Allows return TCP traffic (has ACK/RST bit set)</li>
+        <li><code>access-list 100 deny icmp 192.168.10.0 0.0.0.255 any echo reply</code> applied outbound → <strong>NO traffic</strong> outbound (implicit deny catches everything else)</li>
+        <li><strong>VTY restriction:</strong> Use <code>access-class</code> (not <code>access-group</code>) for lines</li>
+        <li><strong>ASA standard ACLs</strong> identify <em>destination</em> IP (opposite of IOS!). Only used for OSPF routes — NOT applied to interfaces</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 4: Firewalls + ZPF -->
+<div class="section-label">firewalls &amp; zone-based policy</div>
+<div class="grid">
+
+  <div class="card c-orange">
+    <div class="card-head"><div class="dot"></div>Firewall Types</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Type</th><th>OSI Layers</th><th>Key Trait</th></tr>
+        <tr><td><span class="hi2">Packet filter</span></td><td>L3–L4</td><td>Stateless; simplest; supported by most routers</td></tr>
+        <tr><td><span class="hi2">Stateful</span></td><td>L3–L4</td><td>Tracks connection state; allows return traffic automatically</td></tr>
+        <tr><td><span class="hi2">Application/Proxy</span></td><td>L3–L7</td><td>Full proxy; inspects content; slowest</td></tr>
+        <tr><td><span class="hi2">NGFW</span></td><td>L3–L7+</td><td>App awareness + user ID + IPS + SSL inspect</td></tr>
+      </table>
+      <div class="tip"><strong>Stateful firewalls CANNOT</strong> prevent application layer attacks — they don't inspect HTTP content. Need NGFW/IPS for that.</div>
+      <div class="tip"><strong>Proxy firewall</strong> inspects Layers 3, 4, 5, and 7 (two additional beyond packet filter).</div>
+    </div>
+  </div>
+
+  <div class="card c-orange">
+    <div class="card-head"><div class="dot"></div>ASA Key Facts</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Interface</th><th>Level</th><th>Default Traffic Rule</th></tr>
+        <tr><td><span class="hi2">inside</span></td><td>100</td><td>→ lower levels: <span class="hi3">permitted</span></td></tr>
+        <tr><td><span class="hi2">dmz</span></td><td>50</td><td>→ inside: <span class="hir">denied</span>; → outside: permitted</td></tr>
+        <tr><td><span class="hi2">outside</span></td><td>0</td><td>→ any higher: <span class="hir">denied</span> (need ACL)</td></tr>
+      </table>
+      <ul class="clean" style="margin-top:8px">
+        <li>To allow outside→inside: must configure an <strong>ACL</strong></li>
+        <li>ASA ACLs use <strong>subnet masks</strong> not wildcard masks</li>
+        <li>Transparent mode = "bump in the wire"; invisible; no VPN/QoS/DHCP Relay</li>
+        <li>ASA <code>show</code> works in any mode (no <code>do</code> needed)</li>
+        <li>Object NAT: configured inside network objects; evaluated second</li>
+        <li>Twice NAT: standalone; evaluated first; more flexible</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>ZPF — Zone-Based Policy Firewall</div>
+    <div class="card-body">
+      <div style="margin-bottom:6px">
+        <span class="badge b-blue">self zone</span> = system-defined; applies to traffic <em>to/from the router itself</em>
+      </div>
+      <table>
+        <tr><th>Action</th><th>Effect</th></tr>
+        <tr><td><span class="hi">inspect</span></td><td>Stateful — return traffic auto-allowed ✅</td></tr>
+        <tr><td><span class="hi">pass</span></td><td>One-way permit; no state tracking</td></tr>
+        <tr><td><span class="hi">drop</span></td><td>Block (default for unmatched)</td></tr>
+      </table>
+      <div style="margin-top:8px; font-size:12px; color:var(--text)">
+        <strong>Config order:</strong> zones → assign interfaces → class-maps → policy-maps → zone-pairs → service-policy
+      </div>
+      <div class="tip"><strong>ZPF benefits vs Classic:</strong> Not dependent on ACLs. Policies easy to read/troubleshoot. Default deny between zones. Interfaces can only be in <em>one</em> zone.</div>
+      <div class="warn-box"><strong>Traffic between same zone:</strong> permitted. No interface in a zone: cannot communicate with zoned interfaces.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 5: IDS/IPS -->
+<div class="section-label">IDS / IPS</div>
+<div class="grid grid-2">
+
+  <div class="card c-red">
+    <div class="card-head"><div class="dot"></div>IDS vs IPS</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Feature</th><th>IDS</th><th>IPS</th></tr>
+        <tr><td class="dim">Deployment</td><td>Out-of-band (passive)</td><td><strong>Inline</strong> (active)</td></tr>
+        <tr><td class="dim">Response</td><td>Alert only</td><td><strong>Block + alert</strong></td></tr>
+        <tr><td class="dim">Traffic impact</td><td>None</td><td>Adds latency</td></tr>
+        <tr><td class="dim">False positive effect</td><td>Alert noise only</td><td>Blocks legit traffic</td></tr>
+        <tr><td class="dim">Copy of traffic</td><td><strong>Yes</strong> (via SPAN)</td><td>No — live traffic</td></tr>
+      </table>
+      <div class="tip"><strong>Main difference:</strong> IDS would allow malicious traffic to pass before it is addressed; IPS stops it immediately. IDS has <em>no impact on traffic</em>.</div>
+    </div>
+  </div>
+
+  <div class="card c-red">
+    <div class="card-head"><div class="dot"></div>IPS Signatures &amp; Snort</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Detection Type</th><th>How it works</th></tr>
+        <tr><td><span class="hir">Signature/pattern</span></td><td>Matches known attack patterns; simplest; can't detect zero-days</td></tr>
+        <tr><td><span class="hir">Anomaly/behaviour</span></td><td>Deviation from baseline; detects zero-days; higher false positives</td></tr>
+        <tr><td><span class="hir">Policy-based</span></td><td>Admin manually defines suspicious behaviours</td></tr>
+        <tr><td><span class="hir">Honey pot</span></td><td>Decoy server diverts attacks from production</td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <strong>Snort rule actions:</strong>
+        <code>alert</code> · <code>log</code> · <code>pass</code> · <code>drop</code> (block+log) · <code>reject</code> (block+log+RST) · <code>sdrop</code> (block, no log)
+      </div>
+      <div class="tip"><strong>Snort IPS on ISR 4000:</strong> Three policy levels: <span class="hir">security</span>, <span class="hiw">balanced</span>, <span class="hi3">connectivity</span>. IPS detection engine included in SEC license.</div>
+      <div class="tip"><strong>RSPAN</strong> = uses VLANs to monitor traffic on <em>remote</em> switches. SPAN = local only.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 6: Cryptography -->
+<div class="section-label">cryptography</div>
+<div class="grid">
+
+  <div class="card c-green">
+    <div class="card-head"><div class="dot"></div>Symmetric vs Asymmetric</div>
+    <div class="card-body">
+      <table>
+        <tr><th></th><th>Symmetric</th><th>Asymmetric</th></tr>
+        <tr><td class="dim">Keys</td><td>Same key both ends</td><td>Public + private key pair</td></tr>
+        <tr><td class="dim">Speed</td><td><strong>Fast</strong> — bulk data</td><td>Slow — key exchange/signatures</td></tr>
+        <tr><td class="dim">Problem</td><td>Key distribution</td><td>CPU intensive</td></tr>
+        <tr><td class="dim">Examples</td><td>AES, DES, 3DES, RC4</td><td>RSA, DH, ECDH, ECDSA</td></tr>
+        <tr><td class="dim">VPN use</td><td>Bulk data encryption</td><td>Session key exchange</td></tr>
+      </table>
+      <div class="tip"><strong>Site-to-site VPN key type:</strong> symmetric (pre-shared or derived via DH). Exam answer: <em>symmetric key</em>.</div>
+      <div class="tip"><strong>Security lies in key secrecy</strong>, not the algorithm (Kerckhoffs's principle).</div>
+    </div>
+  </div>
+
+  <div class="card c-green">
+    <div class="card-head"><div class="dot"></div>Hashing &amp; Integrity</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Algorithm</th><th>Output</th><th>Status</th></tr>
+        <tr><td><span class="hir">MD5</span></td><td>128-bit</td><td><span class="badge b-red">Deprecated</span></td></tr>
+        <tr><td><span class="hir">SHA-1</span></td><td>160-bit</td><td><span class="badge b-red">Deprecated</span></td></tr>
+        <tr><td><span class="hi3">SHA-256</span></td><td>256-bit</td><td><span class="badge b-green">Current</span></td></tr>
+        <tr><td><span class="hi3">SHA-512</span></td><td>512-bit</td><td><span class="badge b-green">Strong</span></td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <ul class="clean">
+          <li><strong>HMAC</strong> = hash + secret key → integrity <em>and</em> authentication (not confidentiality)</li>
+          <li><strong>Digital signature</strong> = hash encrypted with <em>private key</em> → integrity + auth + non-repudiation</li>
+          <li><strong>Salt</strong> = random value appended to password before hashing → defeats rainbow tables</li>
+        </ul>
+      </div>
+      <div class="tip"><strong>Exam:</strong> MD5 and SHA = data integrity in IPsec. AES = confidentiality. DH = key exchange. RSA = authentication.</div>
+    </div>
+  </div>
+
+  <div class="card c-green">
+    <div class="card-head"><div class="dot"></div>PKI &amp; Certificates</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Component</th><th>Role</th></tr>
+        <tr><td><span class="hi3">CA</span></td><td>Issues and signs certificates (trust anchor)</td></tr>
+        <tr><td><span class="hi3">RA</span></td><td>Validates identity before CA issues cert</td></tr>
+        <tr><td><span class="hi3">CRL</span></td><td>List of revoked certificates</td></tr>
+        <tr><td><span class="hi3">OCSP</span></td><td>Real-time revocation check (alternative to CRL)</td></tr>
+        <tr><td><span class="hi3">X.509</span></td><td>Standard certificate format</td></tr>
+      </table>
+      <div style="margin-top:8px; font-size:12px">
+        <strong>Certificate classes 0–5:</strong> higher = more trusted. Class 5 = private org/government. Class 0 = no checks performed.
+      </div>
+      <div class="tip"><strong>S/MIME</strong> uses X.509 certificates to support mail protection by mail agents.</div>
+      <div class="tip"><strong>PKI = trusted third-party</strong> technology to issue credentials accepted as authoritative identity.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 7: VPN / IPsec -->
+<div class="section-label">VPNs &amp; IPsec</div>
+<div class="grid grid-2">
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>IPsec — AH vs ESP</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Feature</th><th>AH (Protocol 51)</th><th>ESP (Protocol 50)</th></tr>
+        <tr><td class="dim">Confidentiality</td><td><span class="hir">No</span></td><td><span class="hi3">Yes</span></td></tr>
+        <tr><td class="dim">Integrity</td><td><span class="hi3">Yes</span></td><td><span class="hi3">Yes</span></td></tr>
+        <tr><td class="dim">Authentication</td><td><span class="hi3">Yes</span></td><td><span class="hi3">Yes</span></td></tr>
+        <tr><td class="dim">Anti-replay</td><td><span class="hi3">Yes</span></td><td><span class="hi3">Yes</span></td></tr>
+        <tr><td class="dim">NAT compatible</td><td><span class="hir">No</span></td><td><span class="hi3">Yes (NAT-T)</span></td></tr>
+        <tr><td class="dim">Hashing algos</td><td>MD5, SHA</td><td>MD5, SHA</td></tr>
+      </table>
+      <div class="tip"><strong>IKE Phase 1:</strong> Negotiates ISAKMP SA (secure channel). <strong>Phase 2:</strong> Negotiates IPsec SA (data encryption). Phase 2 action = <em>negotiation of IPsec policy</em>.</div>
+      <div class="tip"><strong>IPsec VPN setup order:</strong> interesting traffic (ACL) → IKE Phase 1 → IKE Phase 2 → IPsec tunnel → termination.</div>
+    </div>
+  </div>
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>VPN Types &amp; IPsec Config Facts</div>
+    <div class="card-body">
+      <table>
+        <tr><th>VPN Type</th><th>Key Trait</th></tr>
+        <tr><td><span class="hi">Site-to-site</span></td><td>Always-on; transparent to users; <strong>must be statically set up</strong></td></tr>
+        <tr><td><span class="hi">Remote access</span></td><td>Client software required; user initiates</td></tr>
+        <tr><td><span class="hi">SSL/AnyConnect</span></td><td>Uses TCP/UDP 443; works through any NAT/firewall</td></tr>
+        <tr><td><span class="hi">GRE over IPsec</span></td><td>GRE for multicast/routing; IPsec for encryption</td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <ul class="clean">
+          <li><strong>Crypto ACL</strong> = defines "interesting traffic" to encrypt; must be mirror image on both peers</li>
+          <li><strong>Multiple crypto ACLs</strong> = define different traffic types with different IPsec protection</li>
+          <li><strong>PFS</strong> = new DH exchange per Phase 2 SA; protects past sessions if key compromised</li>
+          <li><strong>Transform set</strong>: <code>esp-aes 256 esp-sha256-hmac</code> — defines encryption + hashing for data</li>
+        </ul>
+      </div>
+      <div class="tip"><strong>IKE Phase 1 modes:</strong> Main (6 msgs, secure), Aggressive (3 msgs, faster, less secure), Quick Mode = Phase 2 only.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 8: Layer 2 -->
+<div class="section-label">layer 2 security</div>
+<div class="grid">
+
+  <div class="card c-red">
+    <div class="card-head"><div class="dot"></div>L2 Attacks &amp; Mitigations</div>
+    <div class="card-body">
+      <table class="atk">
+        <tr><th>Attack</th><th>Mitigation</th></tr>
+        <tr class="atk"><td>MAC flooding</td><td>Port Security (limit MACs per port)</td></tr>
+        <tr class="atk"><td>VLAN hopping (switch spoof)</td><td>Disable DTP; <code>switchport mode access</code>; <code>nonegotiate</code></td></tr>
+        <tr class="atk"><td>VLAN hopping (double tag)</td><td>Change native VLAN to unused VLAN (not VLAN 1)</td></tr>
+        <tr class="atk"><td>DHCP starvation</td><td>DHCP Snooping + rate limit on untrusted ports</td></tr>
+        <tr class="atk"><td>Rogue DHCP server</td><td>DHCP Snooping (trust only uplink ports)</td></tr>
+        <tr class="atk"><td>ARP spoofing/poison</td><td>Dynamic ARP Inspection (DAI) — needs snooping table</td></tr>
+        <tr class="atk"><td>IP/MAC spoofing</td><td>IP Source Guard (<code>ip verify source</code>)</td></tr>
+        <tr class="atk"><td>STP manipulation</td><td>BPDU Guard + Root Guard + PortFast</td></tr>
+      </table>
+      <div class="tip"><strong>VLAN hopping best practice:</strong> Disable trunk negotiation for trunk ports AND statically set nontrunk ports as access ports.</div>
+      <div class="warn-box"><strong>MAC overflow goal:</strong> Attacker wants to see frames destined for OTHER hosts (switch fails open = hub mode).</div>
+    </div>
+  </div>
+
+  <div class="card c-gold">
+    <div class="card-head"><div class="dot"></div>Port Security Violation Modes</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Mode</th><th>Drops?</th><th>Logs?</th><th>Shuts?</th></tr>
+        <tr><td><span class="hiw">protect</span></td><td>✅</td><td>❌</td><td>❌</td></tr>
+        <tr><td><span class="hiw">restrict</span></td><td>✅</td><td>✅</td><td>❌</td></tr>
+        <tr><td><span class="hir">shutdown</span></td><td>✅</td><td>✅</td><td>✅ <span class="dim">(default)</span></td></tr>
+      </table>
+      <div style="margin-top:10px">
+        <strong>STP Security:</strong>
+        <table style="margin-top:4px">
+          <tr><th>Feature</th><th>Applied On</th><th>Does</th></tr>
+          <tr><td><span class="hiw">PortFast</span></td><td>Access ports</td><td>Skip listen/learn states</td></tr>
+          <tr><td><span class="hiw">BPDU Guard</span></td><td>PortFast ports</td><td>Err-disable if BPDU received</td></tr>
+          <tr><td><span class="hiw">Root Guard</span></td><td>Uplink/edge ports</td><td>Prevent becoming root port</td></tr>
+          <tr><td><span class="hiw">Loop Guard</span></td><td>Non-designated</td><td>Detect unidirectional failures</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>802.1X — Port-Based NAC</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Role</th><th>Device</th></tr>
+        <tr><td><span class="hi">Supplicant</span></td><td>End device (PC, phone)</td></tr>
+        <tr><td><span class="hi">Authenticator</span></td><td>Switch / wireless AP</td></tr>
+        <tr><td><span class="hi">Auth Server</span></td><td>RADIUS / Cisco ISE</td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <strong>Command to set authenticator role:</strong><br>
+        <code>dot1x pae authenticator</code>
+      </div>
+      <div style="margin-top:6px">
+        <strong>Port control modes:</strong><br>
+        <code>auto</code> = require auth &nbsp;|&nbsp; <code>force-authorized</code> = always allow &nbsp;|&nbsp; <code>force-unauthorized</code> = always block
+      </div>
+      <div class="tip"><strong>EAP-TLS</strong> = strongest (client + server certs). <strong>PEAP</strong> = most common in enterprise (server cert only + tunneled MS-CHAPv2).</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 9: Monitoring -->
+<div class="section-label">device monitoring</div>
+<div class="grid grid-2">
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>Syslog Severity Levels</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Level</th><th>Name</th><th>Mnemonic</th></tr>
+        <tr><td class="sev-0">0</td><td class="sev-0">Emergency</td><td class="dim">Every</td></tr>
+        <tr><td class="sev-1">1</td><td class="sev-1">Alert</td><td class="dim">Awful</td></tr>
+        <tr><td class="sev-2">2</td><td class="sev-2">Critical</td><td class="dim">Cisco</td></tr>
+        <tr><td class="sev-3">3</td><td class="sev-3">Error</td><td class="dim">Engineer</td></tr>
+        <tr><td class="sev-4">4</td><td class="sev-4">Warning</td><td class="dim">Will</td></tr>
+        <tr><td class="sev-5">5</td><td class="sev-5">Notice</td><td class="dim">Need</td></tr>
+        <tr><td class="sev-6">6</td><td class="sev-6">Informational</td><td class="dim">Ice</td></tr>
+        <tr><td class="sev-7">7</td><td class="sev-7">Debug</td><td class="dim">Daily</td></tr>
+      </table>
+      <div class="tip"><code>logging trap warnings</code> = levels 0–4. Lower number = MORE severe.</div>
+    </div>
+  </div>
+
+  <div class="card c-blue">
+    <div class="card-head"><div class="dot"></div>NTP, SNMP, Monitoring</div>
+    <div class="card-body">
+      <ul class="clean">
+        <li><strong>NTP Stratum 0</strong> = atomic/GPS clock. Each hop adds 1 stratum. Higher = less accurate.</li>
+        <li><strong>Stratum 2</strong> device = synced from stratum 1; can provide NTP to others</li>
+        <li><strong>SNMPv3</strong> = only version with auth + encryption. v1/v2c = community string in cleartext</li>
+        <li>SNMP <strong>TRAP</strong> = unsolicited alert from agent. <strong>INFORM</strong> = trap with acknowledgement</li>
+        <li><strong>SIEM</strong> = centralised log correlation, alerting, forensic analysis</li>
+        <li><strong>NetFlow</strong> = collects IP flow metadata (not payload). Used for anomaly detection</li>
+        <li>OOB management limitation on large networks: all devices appear on a <em>single management network</em></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 10: Number cheatsheet -->
+<div class="section-label">critical numbers &amp; ports</div>
+<div class="grid grid-4">
+
+  <div class="card c-green">
+    <div class="card-head"><div class="dot"></div>Protocol Ports</div>
+    <div class="card-body">
+      <table>
+        <tr><td class="dim">SSH</td><td><span class="hi3">TCP 22</span></td></tr>
+        <tr><td class="dim">Telnet</td><td><span class="hir">TCP 23</span></td></tr>
+        <tr><td class="dim">TACACS+</td><td><span class="hi3">TCP 49</span></td></tr>
+        <tr><td class="dim">HTTP</td><td><span class="hir">TCP 80</span></td></tr>
+        <tr><td class="dim">HTTPS</td><td><span class="hi3">TCP 443</span></td></tr>
+        <tr><td class="dim">RADIUS auth</td><td><span class="hi3">UDP 1812</span></td></tr>
+        <tr><td class="dim">RADIUS acct</td><td><span class="hi3">UDP 1813</span></td></tr>
+        <tr><td class="dim">SNMP</td><td><span class="hi3">UDP 161/162</span></td></tr>
+        <tr><td class="dim">Syslog</td><td><span class="hi3">UDP 514</span></td></tr>
+        <tr><td class="dim">IKE (VPN)</td><td><span class="hi3">UDP 500</span></td></tr>
+        <tr><td class="dim">NAT-T</td><td><span class="hi3">UDP 4500</span></td></tr>
+        <tr><td class="dim">IPsec ESP</td><td><span class="hi3">Proto 50</span></td></tr>
+        <tr><td class="dim">IPsec AH</td><td><span class="hiw">Proto 51</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card c-gold">
+    <div class="card-head"><div class="dot"></div>ACL / IOS Numbers</div>
+    <div class="card-body">
+      <table>
+        <tr><td class="dim">Standard ACL</td><td><span class="hiw">1–99</span></td></tr>
+        <tr><td class="dim">Standard ACL</td><td><span class="hiw">1300–1999</span></td></tr>
+        <tr><td class="dim">Extended ACL</td><td><span class="hiw">100–199</span></td></tr>
+        <tr><td class="dim">Extended ACL</td><td><span class="hiw">2000–2699</span></td></tr>
+        <tr><td class="dim">Priv levels</td><td><span class="hiw">0–15</span></td></tr>
+        <tr><td class="dim">ASA sec level</td><td><span class="hiw">0–100</span></td></tr>
+        <tr><td class="dim">Syslog levels</td><td><span class="hiw">0–7</span></td></tr>
+        <tr><td class="dim">DH min group</td><td><span class="hiw">14 (2048-bit)</span></td></tr>
+        <tr><td class="dim">Cert class best</td><td><span class="hiw">5 (gov/private)</span></td></tr>
+        <tr><td class="dim">Cert class worst</td><td><span class="hiw">0 (no checks)</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card c-red">
+    <div class="card-head"><div class="dot"></div>Insecure Protocols</div>
+    <div class="card-body">
+      <table>
+        <tr><td><span class="hir">Telnet</span></td><td class="dim">→ Use SSH</td></tr>
+        <tr><td><span class="hir">FTP</span></td><td class="dim">→ Use SFTP/SCP</td></tr>
+        <tr><td><span class="hir">HTTP</span></td><td class="dim">→ Use HTTPS</td></tr>
+        <tr><td><span class="hir">SNMPv1/v2c</span></td><td class="dim">→ Use SNMPv3</td></tr>
+        <tr><td><span class="hir">MD5</span></td><td class="dim">→ Use SHA-256</td></tr>
+        <tr><td><span class="hir">DES/3DES</span></td><td class="dim">→ Use AES-256</td></tr>
+        <tr><td><span class="hir">RC4</span></td><td class="dim">→ Use AES-GCM</td></tr>
+        <tr><td><span class="hir">DH grp 1/2/5</span></td><td class="dim">→ Use grp 14+</td></tr>
+        <tr><td><span class="hir">IPsec AH only</span></td><td class="dim">→ Use ESP</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card c-green">
+    <div class="card-head"><div class="dot"></div>NFP — 3 Planes</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Plane</th><th>Traffic type</th></tr>
+        <tr><td><span class="hi3">Management</span></td><td>To/from router (SSH, SNMP, syslog) → Role-based access</td></tr>
+        <tr><td><span class="hi3">Control</span></td><td>Routing protocols (OSPF, BGP) → Route auth, CoPP</td></tr>
+        <tr><td><span class="hi3">Data</span></td><td>User transit traffic → ACLs, firewall, IPS, uRPF</td></tr>
+      </table>
+      <div class="tip"><strong>Management plane</strong> = role-based access control. <strong>Control plane</strong> = routing protocol authentication. <strong>Data plane</strong> = ACLs + antispoofing.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ROW 11: Security Testing -->
+<div class="section-label">security testing &amp; exam traps</div>
+<div class="grid grid-2">
+
+  <div class="card c-orange">
+    <div class="card-head"><div class="dot"></div>Security Testing Types</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Test</th><th>What it does</th></tr>
+        <tr><td><span class="hi2">Penetration test</span></td><td>Simulated attacks; determines <em>feasibility</em> of attack + consequences</td></tr>
+        <tr><td><span class="hi2">Vulnerability scan</span></td><td>Detects potential weaknesses; does NOT exploit</td></tr>
+        <tr><td><span class="hi2">Network scan</span></td><td>Identifies open TCP ports and live hosts</td></tr>
+        <tr><td><span class="hi2">Integrity check</span></td><td>Detects changes in the system</td></tr>
+        <tr><td><span class="hi2">Security audit</span></td><td>Compare config against policy/standard</td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <strong>Nmap:</strong> Identifies network layer protocols running on a host (Layer 3 scanning).
+      </div>
+      <div class="tip"><strong>BYOD security:</strong> Keep OS/software updated + only turn on Wi-Fi when using wireless.</div>
+    </div>
+  </div>
+
+  <div class="card c-gold">
+    <div class="card-head"><div class="dot"></div>Classic Exam Traps — Know These Cold</div>
+    <div class="card-body">
+      <ul class="clean">
+        <li><strong>ASA standard ACL</strong> identifies <em>destination</em> (not source like IOS). Only used for OSPF routes.</li>
+        <li><strong>ASA uses subnet masks</strong> in ACLs, NOT wildcard masks</li>
+        <li><strong>ZPF self zone</strong> = system-defined; no interface assignment needed</li>
+        <li><strong>single-connection</strong> keyword in TACACS+ config = keeps ONE TCP connection open, enhancing performance</li>
+        <li><strong>IDS uses copies</strong> of traffic (SPAN/TAP); IPS sits inline with live traffic</li>
+        <li><strong>Stateful firewall CANNOT</strong> stop application layer attacks</li>
+        <li><strong>Router-generated packets</strong> bypass outbound ACLs</li>
+        <li><strong>RADIUS function:</strong> provides <em>separate ports</em> for authorization and accounting — NOT separate AAA services (that's TACACS+)</li>
+        <li><strong>Worm vs Virus:</strong> virus attaches to file + needs user action; worm self-replicates independently</li>
+        <li><strong>SSL Appliance</strong> needed to decrypt SSL traffic so IPS can inspect it</li>
+        <li><strong>AUP violation:</strong> First action = create firewall rule, OR revise AUP and get signatures (not suspend immediately)</li>
+        <li><strong>OSPF MD5 auth</strong> does NOT encrypt routing updates — only authenticates them</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  CISCO NETACAD · NETWORK SECURITY 1.0 · FINAL EXAM CHEATSHEET · ALL MODULES COVERED
+</footer>
+
+</body>
+</html>
