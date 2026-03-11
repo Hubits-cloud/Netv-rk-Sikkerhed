@@ -537,6 +537,8 @@ Three planes of the router, each requiring separate security:
 
 15. **Traffic from private network → DMZ** = selectively permitted and inspected (not "little or no restrictions" — that's internal LAN to LAN).
 
+16. **SCP → SSH** = SCP uses SSH to securely transfer files
+
 ---
 
 *Cisco NetAcad · Network Security 1.0 · Final Exam Cheatsheet*
