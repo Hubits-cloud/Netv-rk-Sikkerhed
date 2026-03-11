@@ -409,7 +409,7 @@ e.g. /24 mask = `255.255.255.0` → wildcard = `0.0.0.255`
 | **2** | Critical | **C**isco |
 | **3** | Error | **E**ngineer |
 | **4** | Warning | **W**ill |
-| **5** | Notice | **N**eed |
+| **5** | Notification | **N**eed |
 | **6** | Informational | **I**ce |
 | **7** | Debug | **D**aily |
 
